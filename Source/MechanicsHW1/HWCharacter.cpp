@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "Engine/Engine.h"
+#include "Perception/AISense_Hearing.h"
 
 AHWCharacter::AHWCharacter() {
     PrimaryActorTick.bCanEverTick = true;
@@ -95,8 +96,14 @@ void AHWCharacter::Tick(float DeltaTime) {
     if (bIsSprinting) {
         Stamina = FMath::Max(0.0f, Stamina - StaminaDrain * DeltaTime);
         if (Stamina <= 0.0f) StopSprint();
+        NoiseTimer += DeltaTime;
+        if (NoiseTimer >= 0.6f && GetVelocity().Size2D() > 100.0f) {
+            UAISense_Hearing::ReportNoiseEvent(GetWorld(), GetActorLocation(), 1.0f, this);
+            NoiseTimer = 0.0f;
+        }
     } else {
         Stamina = FMath::Min(100.0f, Stamina + StaminaRecovery * DeltaTime);
+        NoiseTimer = 0.0f;
     }
 
     if (GEngine && IsLocallyControlled()) {

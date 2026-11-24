@@ -61,6 +61,7 @@ protected:
     UInputAction* InteractAction;
 
 private:
+    float NoiseTimer = 0.0f;
     const float WalkSpeed = 500.0f;
     const float SprintSpeed = 900.0f;
     const float StaminaDrain = 20.0f;
